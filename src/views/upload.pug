@@ -1,0 +1,7 @@
+extends base.pug
+
+block content
+    //-input에 name이 없으면 controller에서 req.body를 하여도 내용이 출력되지 않는다.
+    form(method="POST")
+        input(placeholder="Title", required, typer="text", name="title")
+        input(type="submit", value ="Upload Video" )
