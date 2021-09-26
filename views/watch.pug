@@ -1,0 +1,9 @@
+extends base.pug
+
+//- href=(/edit)은 메인/edit으로 넘어가고
+//- href=(edit)은 현재주소/edit으로 넘어간다.
+block content 
+    div
+        p=video.description
+        small=video.createdAt 
+    a(href=`${video.id}/edit`) Edit Video &rarr;
