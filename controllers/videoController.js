@@ -7,12 +7,13 @@ import Video from "../models/Video";
 
 export const home = async (req, res) => {
   try {
-    const videos = await Video.find({});
+    const videos = await Video.find({}).sort({ createdAt: "desc" });
     res.render("home", { pageTitle: "Home", videos });
   } catch {
     return res.render("server-error");
   }
 };
+
 export const watch = async (req, res) => {
   const id = req.params.id;
   const video = await Video.findById(id);
@@ -21,6 +22,7 @@ export const watch = async (req, res) => {
   }
   return res.render("watch", { pageTitle: video.title, video: video });
 };
+
 export const getEdit = async (req, res) => {
   const id = req.params.id;
   const video = await Video.findById(id);
@@ -32,6 +34,7 @@ export const getEdit = async (req, res) => {
     video: video,
   });
 };
+
 export const postEdit = async (req, res) => {
   const id = req.params.id;
   const { title, description, hashtags } = req.body;
@@ -43,25 +46,25 @@ export const postEdit = async (req, res) => {
   await Video.findByIdAndUpdate(id, {
     title,
     description,
-    hashtags: hashtags
-      .split(",")
-      .map((word) => (word.startsWith("#") ? word : `#${word}`)),
+    hashtags: Video.formatHashtags(hashtags),
   });
-  await video.save();
   return res.redirect(`/videos/${id}`);
 };
+
 export const getUpload = (req, res) => {
   return res.render("upload", { pageTitle: "Upload Video" });
 };
+
 export const postUpload = async (req, res) => {
   const { title, description, hashtags } = req.body;
   //아래의 title은 java에서 constructor 생성과 같이 this.title = title과 같은 의미이다.
+  //save는 promise를 return해준다. db에 저장될 때 까지 기디란다.
   //Video.create는 const video = new Video()와 await video.save();를 합친 코드이다.
   try {
     await Video.create({
       title,
       description,
-      hashtags: hashtags.split(",").map((word) => `#${word}`),
+      hashtags: Video.formatHashtags(hashtags),
     });
     return res.redirect("/");
   } catch (error) {
@@ -70,5 +73,25 @@ export const postUpload = async (req, res) => {
       errorMessage: error._message,
     });
   }
-  //save는 promise를 return해준다. db에 저장될 때 까지 기디란다.
+};
+
+export const deleteVideo = async (req, res) => {
+  // const { id } = req.params;  와 const id = req.params.id 와 같은 표현
+  const { id } = req.params;
+  await Video.findByIdAndDelete(id);
+  return res.redirect("/");
+};
+
+export const search = async (req, res) => {
+  const { keyword } = req.query;
+  let videos = [];
+  if (keyword) {
+    videos = await Video.find({
+      title: {
+        // 정규표현식으로 keyword를 포함한 모든것을 찾게하는 코드
+        $regex: new RegExp(keyword, "i"),
+      },
+    });
+  }
+  return res.render("search", { pageTitle: "Search", videos });
 };

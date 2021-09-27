@@ -5,6 +5,7 @@ import {
   postEdit,
   getUpload,
   postUpload,
+  deleteVideo,
 } from "../controllers/videoController";
 
 const videoRouter = express.Router();
@@ -13,6 +14,7 @@ const videoRouter = express.Router();
 //(\\d+) 는 id를 숫자로만 받기 위한 정규표현식이다
 videoRouter.get("/:id([0-9a-f]{24})", watch);
 videoRouter.route("/:id([0-9a-f]{24})/edit").get(getEdit).post(postEdit);
+videoRouter.route("/:id([0-9a-f]{24})/delete").get(deleteVideo);
 videoRouter.route("/upload").get(getUpload).post(postUpload);
 
 export default videoRouter;
