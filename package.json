@@ -1,0 +1,30 @@
+{
+    "name": "clonetube",
+    "version": "1.0.0",
+    "description": "Watching video.",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Guksu/CloneTube.git"
+    },
+    "scripts": {
+        "dev": "nodemon --exec babel-node src/init.js"
+    },
+    "author": "KimJongMin",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/Guksu/CloneTube/issues"
+    },
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "express": "^4.17.1",
+        "mongoose": "^6.0.7",
+        "morgan": "^1.10.0",
+        "pug": "^3.0.2"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.15.5",
+        "@babel/node": "^7.15.4",
+        "@babel/preset-env": "^7.15.6",
+        "nodemon": "^2.0.12"
+    }
+}
