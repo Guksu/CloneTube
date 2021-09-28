@@ -9,13 +9,22 @@ html( lang="ko" )
             nav
                 ul
                     li 
-                        a(href="/videos/upload") Upload Video 
-                    li 
                         a(href="/") Home
+                        //- pug는 express의 locals에 접속할 수 있으므로 req.session.loggedIn 대신 다음의 코드를 사용한다.
+                    if loggedIn 
+                        li 
+                            a(href="/logout") LogOut    
+                        li
+                            a(href="/my-profile") #{loggedInUser.name}의 Profile   
+                    else
+                        li 
+                            a(href="/login") Login 
+                        li 
+                            a(href="/join") Join
                     li       
                         a(href="/search") Search Video
                     li
-                        a(href="/join") Join
+                        a(href="/videos/upload") Upload Video 
         main
             block content
     include partials/footer.pug       
