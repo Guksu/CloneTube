@@ -1,0 +1,32 @@
+import express from "express";
+import {
+  watch,
+  getEdit,
+  postEdit,
+  getUpload,
+  postUpload,
+  deleteVideo,
+} from "../controllers/videoController";
+import { protecetMiddleware, videoUpload } from "../middlewares";
+
+const videoRouter = express.Router();
+
+// :id 는 변수를 뜻한다. :가 있어야 express는 변수라 인식한다.
+//(\\d+) 는 id를 숫자로만 받기 위한 정규표현식이다
+videoRouter.get("/:id([0-9a-f]{24})", watch);
+videoRouter
+  .route("/:id([0-9a-f]{24})/edit")
+  .all(protecetMiddleware)
+  .get(getEdit)
+  .post(postEdit);
+videoRouter
+  .route("/:id([0-9a-f]{24})/delete")
+  .all(protecetMiddleware)
+  .get(deleteVideo);
+videoRouter
+  .route("/upload")
+  .all(protecetMiddleware)
+  .get(getUpload)
+  .post(videoUpload.single("video"), postUpload);
+
+export default videoRouter;

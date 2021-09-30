@@ -1,0 +1,13 @@
+extends base.pug
+
+block content
+    if errorMessage
+        span=errorMessage 
+    //-input에 name이 없으면 controller에서 req.body를 하여도 내용이 출력되지 않는다.
+    form(method="POST", enctype="multipart/form-data")
+        label(form="video") Video File
+        input(type="file", accept="video/*", required, id="video", name="video")
+        input(placeholder="Title", required, type="text", name="title", minlength=1)
+        input(placeholder="Description", required, type="text", name="description",maxlength=150)
+        input(placeholder="Hashtags, separated by comma.", required, type="text", name="hashtags")
+        input(type="submit", value ="Upload Video" )

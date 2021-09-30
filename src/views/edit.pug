@@ -1,0 +1,14 @@
+extends base.pug
+
+block content
+    h4 Upadte video
+    //-action=""은 submit 데이터가 이동할 곳(기본값으로 method는 get이다)
+    //-post의 경우 database를 바꿀 data를 보내거나 file을 보낼 때 사용한다
+    //-get은 네이버나 구글에서 검색할 때와 같은 작업을 수행시 사용된다.(form의 정보가 url에 들어간다.)
+    form(method="POST")
+        input(name="title", placeholder="Video Title", value=video.title, required)
+        input(placeholder="Description", required, type="text", name="description",maxlength=150, value=video.description)
+        //-hashtag의 value는 array형태이므로 join()을 사용하여 문자열처럼 보이게 해줘야 한다.
+        input(placeholder="Hashtags, separated by comma.", required, type="text", name="hashtags", value=video.hashtags.join()) 
+        input(value="Save",type="submit")
+        

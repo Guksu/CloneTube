@@ -1,0 +1,10 @@
+extends base.pug
+include mixins/video
+
+//- 여기서 보내는 정보는 controller에서 req.query를 통해 알 수 있다.
+block content  
+    form(method="GET")
+        input(placeholder="Search by title", type="text",name="keyword")
+        input(type="submit",value="Search now" )
+    each video in videos 
+        +video(video)

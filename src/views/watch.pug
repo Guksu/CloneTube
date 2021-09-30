@@ -1,0 +1,16 @@
+extends base.pug
+
+//- href=(/edit)은 메인/edit으로 넘어가고
+//- href=(edit)은 현재주소/edit으로 넘어간다.
+block content 
+    video(src="/"+ video.fileUrl, controls)
+    div
+        p=video.description
+        small=video.createdAt 
+    div 
+        small Uploaded by 
+            a(href=`/users/${video.owner._id}`) #{video.owner.name}
+    if String(video.owner.id) === String(loggedInUser._id)
+        a(href=`${video.id}/edit`) Edit Video &rarr;
+        br
+        a(href=`${video.id}/delete`) Delete Video &rarr;
