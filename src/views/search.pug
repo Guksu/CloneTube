@@ -3,8 +3,12 @@ include mixins/video
 
 //- 여기서 보내는 정보는 controller에서 req.query를 통해 알 수 있다.
 block content  
-    form(method="GET")
+    form(method="GET").search__form
         input(placeholder="Search by title", type="text",name="keyword")
-        input(type="submit",value="Search now" )
+        button
+            i.fas.fa-search
+    div.video-grid            
     each video in videos 
         +video(video)
+    else
+        span.empty__message No videos found 

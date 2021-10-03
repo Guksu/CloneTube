@@ -1,0 +1,25 @@
+//- pug는 express의 locals에 접속할 수 있으므로 req.session.loggedIn 대신 다음의 코드를 사용한다.
+header
+    a(href="/").header__logo
+        i.fab.fa-youtube
+    nav
+        ul
+            li
+                a(href="/search")
+                    i.fas.fa-search
+            if loggedIn 
+                li
+                    a(href="/videos/upload") Upload Video 
+                li
+                    a(href="/users/edit") Edit Profile
+                li 
+                    a(href="/users/logout") LogOut    
+                                li
+                    a(href=`/users/${loggedInUser._id}`)
+                        if loggedInUser.avatarUrl === ""
+                            span 😀
+                        else
+                            img.header__avatar(src="/" + loggedInUser.avatarUrl)    
+            else
+                li
+                    a(href="/join").header__btn  Join

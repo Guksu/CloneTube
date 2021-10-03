@@ -1,4 +1,5 @@
 import Video from "../models/Video";
+import Comment from "../models/Comment";
 import User from "../models/User";
 
 //find의 요소는 callback이므로 가장 마지막에 실행된다
@@ -7,12 +8,10 @@ import User from "../models/User";
 //즉 await를 사용하면 코드의 흐름대로 사용 가능하다.  --> 쓰레드와 유사한 개념
 
 export const home = async (req, res) => {
-  try {
-    const videos = await Video.find({}).sort({ createdAt: "desc" });
-    res.render("home", { pageTitle: "Home", videos });
-  } catch {
-    return res.render("server-error");
-  }
+  const videos = await Video.find({})
+    .sort({ createdAt: "desc" })
+    .populate("owner");
+  return res.render("home", { pageTitle: "Home", videos });
 };
 
 export const watch = async (req, res) => {
@@ -20,7 +19,7 @@ export const watch = async (req, res) => {
   //populate를 사용하면 해당 인자에 해당하는 것을 불러온다.
   //즉 , owner는 User schema와 연결했으므로 User의 객체를 가져온다.
   // console.log(viedo)로 확인하면 차이를 쉽게 알 수 있음
-  const video = await Video.findById(id).populate("owner");
+  const video = await Video.findById(id).populate("owner").populate("comments");
   if (video === null) {
     return res.status(404).render("404", { pageTitle: "Video not found" });
   }
@@ -38,6 +37,7 @@ export const getEdit = async (req, res) => {
   }
   //video.owner는 object이고 req.session.user._id는 String이므로 둘의 type을 같게 해줘야한다.
   if (String(video.owner) !== String(req.session.user._id)) {
+    req.flash("error", "Not authorized");
     return res.status(403).redirect("/");
   }
   return res.render("edit", {
@@ -119,7 +119,39 @@ export const search = async (req, res) => {
         // 정규표현식으로 keyword를 포함한 모든것을 찾게하는 코드
         $regex: new RegExp(keyword, "i"),
       },
-    });
+    }).populate("owner");
   }
   return res.render("search", { pageTitle: "Search", videos });
+};
+
+//렌더링 하는게 없는 경우 status 대신 sendStatus를 사용해야한다.
+export const registerView = async (req, res) => {
+  const { id } = req.params;
+  const video = await Video.findById(id);
+  if (!video) {
+    return res.sendStatus(404);
+  }
+  video.meta.views = video.meta.views + 1;
+  await video.save();
+  return res.sendStatus(200);
+};
+
+export const createComment = async (req, res) => {
+  const {
+    session: { user },
+    body: { text },
+    params: { id },
+  } = req;
+  const video = await Video.findById(id);
+  if (!video) {
+    return res.sendStatus(404);
+  }
+  const comment = await Comment.create({
+    text,
+    owner: user._id,
+    video: id,
+  });
+  video.comments.push(comment._id);
+  video.save();
+  return res.sendStatus(201);
 };
